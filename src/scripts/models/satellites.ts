@@ -12,7 +12,7 @@ export default class Satellites {
     }
 }
 
-type Satellite = {
+export type Satellite = {
     id: number;
     name: string;
     latitude: number;

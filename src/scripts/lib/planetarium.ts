@@ -10,26 +10,24 @@ export default class Planetarium {
 
     textureLoader: THREE.TextureLoader;
 
-    sphereGeometry: THREE.SphereGeometry;
-    sphereMaterial: THREE.MeshBasicMaterial;
+    earthGeometry: THREE.SphereGeometry;
+    earthMaterial: THREE.MeshBasicMaterial;
     sphereTexture: THREE.Texture;
-    sphere: THREE.Mesh;
+    earth: THREE.Mesh;
 
-    satelliteGeometry: THREE.SphereGeometry;
-    satelliteMaterial: THREE.MeshBasicMaterial;
-    satellite: THREE.Mesh;
+    issGeometry: THREE.SphereGeometry;
+    issMaterial: THREE.MeshBasicMaterial;
+    iss: THREE.Mesh;
 
-    scale: number = 1 / 1000
-    earthRadius: number = 6371000 * this.scale; // Radio de la Tierra en metros
-    satelliteRadius: number = 50000 * this.scale; // Radio del satélite en metros
-
-    earthSatelliteDistance: number = 700000 * this.scale;
+    scale: number = 1 / 1_000;
+    earthRadius: number = 6_371_000 * this.scale; // radio de la Tierra en metros
+    satelliteRadius: number = 50_000 * this.scale; // radio del satélite en metros, sobredimensionado
 
     constructor() {
-        this.setControlAnimation = this.setControlAnimation.bind(this);
+        this.startAnimation = this.startAnimation.bind(this);
 
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1000, 100000);
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1_000, 1_00_000);
         this.camera.position.z = 15000;
         this.renderer = new THREE.WebGLRenderer();
 
@@ -39,48 +37,50 @@ export default class Planetarium {
 
         this.textureLoader = new THREE.TextureLoader();
         this.sphereTexture = this.textureLoader.load("./earth-texture.jpg", () => {
+
+            // renderizar cuando se ha cargado la textura de la tierra
             this.renderer.render(this.scene, this.camera);
         });
 
-        this.sphereGeometry = new THREE.SphereGeometry(this.earthRadius, 150, 150);
-        this.sphereMaterial = new THREE.MeshBasicMaterial({ map: this.sphereTexture });
-        this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial)
+        this.earthGeometry = new THREE.SphereGeometry(this.earthRadius, 150, 150);
+        this.earthMaterial = new THREE.MeshBasicMaterial({ map: this.sphereTexture });
+        this.earth = new THREE.Mesh(this.earthGeometry, this.earthMaterial)
+        this.scene.add(this.earth);
 
-        this.scene.add(this.sphere);
+        this.issGeometry = new THREE.SphereGeometry(this.satelliteRadius, 32, 32);
+        this.issMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        this.iss = new THREE.Mesh(this.issGeometry, this.issMaterial);
+        this.scene.add(this.iss);
 
-        // Creamos el modelo del satélite
-        this.satelliteGeometry = new THREE.SphereGeometry(this.satelliteRadius, 32, 32);
-        this.satelliteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        this.satellite = new THREE.Mesh(this.satelliteGeometry, this.satelliteMaterial);
-        this.scene.add(this.satellite);
+        const lat = 40;
+        const long = -75;
+        const alt = 1_000_000 * this.scale;
 
-        // Posición del satélite (latitud, longitud, altitud)
-        const lat = 40; // Ejemplo de latitud
-        const lon = -75; // Ejemplo de longitud
-        const alt = this.earthSatelliteDistance; // Ejemplo de altitud
+        this.setIssPosition(lat, long, alt);
 
-        // Convertimos las coordenadas a cartesianas
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(this.renderer.domElement);
+
+        this.startAnimation();
+    }
+
+
+    startAnimation() {
+        requestAnimationFrame(this.startAnimation);
+
+        this.controls.update();
+        this.renderer.render(this.scene, this.camera)
+    }
+
+    setIssPosition(lat: number, long: number, alt: number) {
         const phi = (90 - lat) * (Math.PI / 180);
-        const theta = (lon + 180) * (Math.PI / 180);
-        const radius = this.earthRadius + alt; // Sumamos la altitud a la distancia del centro de la Tierra
+        const theta = (long + 180) * (Math.PI / 180);
+        const radius = this.earthRadius + alt; // radio desde el centro de la tierra hasta iss
 
         const x = -(radius * Math.sin(phi) * Math.cos(theta));
         const y = radius * Math.cos(phi);
         const z = radius * Math.sin(phi) * Math.sin(theta);
 
-
-        // Trasladamos el satélite a las coordenadas calculadas
-        this.satellite.position.set(x, y, z);
-
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(this.renderer.domElement);
-
-        this.setControlAnimation();
-    }
-
-    setControlAnimation() {
-        requestAnimationFrame(this.setControlAnimation);
-        this.controls.update();
-        this.renderer.render(this.scene, this.camera)
+        this.iss.position.set(x, y, z);
     }
 }
