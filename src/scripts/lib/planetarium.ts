@@ -8,10 +8,12 @@ export default class Planetarium {
     renderer: THREE.WebGLRenderer;
     controls: OrbitControls;
 
+    directionalLight: THREE.DirectionalLight
+
     textureLoader: THREE.TextureLoader;
 
     earthGeometry: THREE.SphereGeometry;
-    earthMaterial: THREE.MeshBasicMaterial;
+    earthMaterial: THREE.MeshLambertMaterial;
     sphereTexture: THREE.Texture;
     earth: THREE.Mesh;
 
@@ -27,13 +29,22 @@ export default class Planetarium {
         this.startAnimation = this.startAnimation.bind(this);
 
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1_000, 1_00_000);
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1_000, 100_000);
         this.camera.position.z = 15000;
         this.renderer = new THREE.WebGLRenderer();
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
+
+        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+        this.scene.add( this.directionalLight );
+
+        // // Crear un objeto para representar la dirección y la orientación de la cámara
+        // const lightHelper = new THREE.ArrowHelper(this.directionalLight.getWorldDirection(new THREE.Vector3()), this.directionalLight.position, 1000, 0xff0000);
+
+        // // Añadir el objeto a la escena
+        // this.scene.add(lightHelper);
 
         this.textureLoader = new THREE.TextureLoader();
         this.sphereTexture = this.textureLoader.load("./earth-texture.jpg", () => {
@@ -43,7 +54,8 @@ export default class Planetarium {
         });
 
         this.earthGeometry = new THREE.SphereGeometry(this.earthRadius, 150, 150);
-        this.earthMaterial = new THREE.MeshBasicMaterial({ map: this.sphereTexture });
+        this.earthMaterial = new THREE.MeshLambertMaterial({ map: this.sphereTexture });
+        // this.earthMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.earth = new THREE.Mesh(this.earthGeometry, this.earthMaterial)
         this.scene.add(this.earth);
 

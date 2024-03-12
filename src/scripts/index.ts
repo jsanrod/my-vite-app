@@ -7,7 +7,9 @@ import { Satellite } from "./models/satellites";
 
 const planetarium = new Planetarium();
 
-setInterval(async () => {
+setInterval(await doFetch, 5000);
+
+async function doFetch() {
     const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
     const issData = await response.json() as Satellite;
 
@@ -15,7 +17,6 @@ setInterval(async () => {
     console.log(latitude, longitude, altitude);
 
     planetarium.setIssPosition(latitude * 10, longitude * 10, altitude);
-
-}, 1000)
+}
 
 
