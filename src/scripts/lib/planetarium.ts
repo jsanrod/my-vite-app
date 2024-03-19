@@ -44,7 +44,7 @@ export default class Planetarium {
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
 
-        this.ambientalLight = new THREE.AmbientLight( 0xffffff );
+        this.ambientalLight = new THREE.AmbientLight(0xffffff);
         // this.scene.add(this.ambientalLight);
 
 
@@ -68,16 +68,17 @@ export default class Planetarium {
         this.setIssPosition(initialLat, initialLong, this.issAltitude);
 
         this.dayLight = new THREE.DirectionalLight(0xffffff, 1);
-        this.dayLight.position.set(1, 0, 1).normalize();
+        this.dayLight.position.set(12, 0, 12);
         this.dayLight.target = this.earth;
 
         this.nightLight = new THREE.DirectionalLight(0xffffff, 0.1);
-        this.nightLight.position.set(-1, 0, -1).normalize();
+        this.nightLight.position.set(-12, 0, -12);
 
         this.scene.add(this.dayLight, this.nightLight);
 
-        // const helper = new THREE.DirectionalLightHelper(this.dayLight, 15);
-        // this.scene.add( helper );
+        // const helper1 = new THREE.DirectionalLightHelper(this.dayLight, 2);
+        // const helper2 = new THREE.DirectionalLightHelper(this.nightLight, 2);
+        // this.scene.add(helper1, helper2);
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
@@ -89,6 +90,11 @@ export default class Planetarium {
         requestAnimationFrame(this.startAnimation);
 
         // rotar las luces respecto al eje Y de la tierra
+        this.dayLight.position.x = 12 * Math.sin(Date.now() / 10_000);
+        this.dayLight.position.z = 12 * Math.cos(Date.now() / 10_000);
+
+        this.nightLight.position.x = -12 * Math.sin(Date.now() / 10_000);
+        this.nightLight.position.z = -12 * Math.cos(Date.now() / 10_000);
 
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
@@ -109,9 +115,9 @@ export default class Planetarium {
     async getIssPosition() {
         const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
         const issData = await response.json() as Satellite;
-    
+
         const { latitude, longitude } = issData;
-    
+
         return { latitude, longitude }
     }
 }
