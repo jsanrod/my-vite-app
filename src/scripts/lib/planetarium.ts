@@ -52,6 +52,14 @@ export default class Planetarium {
         document.body.appendChild(this.renderer.domElement);
 
         this.startAnimation();
+
+        setInterval(async () => {     
+            const { latitude, longitude } = await this.iss.getIssPosition();
+            console.log(`lat: ${latitude}, long: ${longitude}`);
+        
+            // se asume una altura constante de 2 unidades en threejs
+            this.iss.setIssPosition(latitude, longitude, this.iss.altitude);
+        }, 2500);
     }
 
     startAnimation() {
@@ -63,4 +71,6 @@ export default class Planetarium {
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
     }
+
+    
 }
