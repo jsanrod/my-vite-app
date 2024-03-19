@@ -18,7 +18,7 @@ export class Iss extends CelestialObject {
         super(issGeometry, issMaterial);
     }
 
-    setIssPosition(lat: number, long: number, alt: number) {
+    setPositionFromCoords(lat: number, long: number, alt: number) {
         const phi = (90 - lat) * (Math.PI / 180);
         const theta = (long + 180) * (Math.PI / 180);
         const radius = this.earthRadius + alt; // radio desde el centro de la tierra hasta iss

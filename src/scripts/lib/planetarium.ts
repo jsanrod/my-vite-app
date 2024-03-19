@@ -40,7 +40,7 @@ export default class Planetarium {
         this.scene.add(this.earth.mesh);
 
         this.iss = new Iss();
-        this.iss.setIssPosition(this.iss.initialLat, this.iss.initialLong, this.iss.altitude);
+        this.iss.setPositionFromCoords(this.iss.initialLat, this.iss.initialLong, this.iss.altitude);
         this.scene.add(this.iss.mesh);
 
 
@@ -58,7 +58,7 @@ export default class Planetarium {
             console.log(`lat: ${latitude}, long: ${longitude}`);
         
             // se asume una altura constante de 2 unidades en threejs
-            this.iss.setIssPosition(latitude, longitude, this.iss.altitude);
+            this.iss.setPositionFromCoords(latitude, longitude, this.iss.altitude);
         }, 2500);
     }
 
@@ -72,5 +72,5 @@ export default class Planetarium {
         this.renderer.render(this.scene, this.camera);
     }
 
-    
+
 }
