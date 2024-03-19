@@ -16,6 +16,6 @@ setInterval(async () => {
 
     planetarium.setIssPosition(latitude * 10, longitude * 10, altitude);
 
-}, 5000)
+}, 5000);
 
 

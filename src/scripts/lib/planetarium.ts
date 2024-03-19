@@ -8,7 +8,8 @@ export default class Planetarium {
     renderer: THREE.WebGLRenderer;
     controls: OrbitControls;
 
-    directionalLight: THREE.DirectionalLight
+    // directionalLight: THREE.DirectionalLight
+    ambientalLight: THREE.AmbientLight;
 
     textureLoader: THREE.TextureLoader;
 
@@ -37,14 +38,8 @@ export default class Planetarium {
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
 
-        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-        this.scene.add( this.directionalLight );
-
-        // // Crear un objeto para representar la dirección y la orientación de la cámara
-        // const lightHelper = new THREE.ArrowHelper(this.directionalLight.getWorldDirection(new THREE.Vector3()), this.directionalLight.position, 1000, 0xff0000);
-
-        // // Añadir el objeto a la escena
-        // this.scene.add(lightHelper);
+        this.ambientalLight = new THREE.AmbientLight( 0xffffff );
+        this.scene.add(this.ambientalLight);
 
         this.textureLoader = new THREE.TextureLoader();
         this.sphereTexture = this.textureLoader.load("./earth-texture.jpg", () => {
@@ -55,7 +50,6 @@ export default class Planetarium {
 
         this.earthGeometry = new THREE.SphereGeometry(this.earthRadius, 150, 150);
         this.earthMaterial = new THREE.MeshLambertMaterial({ map: this.sphereTexture });
-        // this.earthMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.earth = new THREE.Mesh(this.earthGeometry, this.earthMaterial)
         this.scene.add(this.earth);
 
