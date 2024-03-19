@@ -2,9 +2,9 @@ import "../styles/index.scss"
 import Planetarium from "./lib/planetarium"
 import { Satellite } from "./models/satellites";
 
-const { latitude: initialLat, longitude: initialLong } = await getIssPosition();
+// const { latitude: initialLat, longitude: initialLong } = await getIssPosition();
 
-const planetarium = new Planetarium(initialLat, initialLong);
+const planetarium = new Planetarium();
 
 setInterval(async () => {
     const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
@@ -19,12 +19,12 @@ setInterval(async () => {
 }, 2500);
 
 
-async function getIssPosition() {
-    const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
-    const issData = await response.json() as Satellite;
+// async function getIssPosition() {
+//     const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
+//     const issData = await response.json() as Satellite;
 
-    const { latitude, longitude } = issData;
+//     const { latitude, longitude } = issData;
 
-    return { latitude, longitude }
-}
+//     return { latitude, longitude }
+// }
 

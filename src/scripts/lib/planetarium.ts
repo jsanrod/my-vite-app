@@ -30,7 +30,7 @@ export default class Planetarium {
     dayLight: THREE.DirectionalLight;
     nightLight: THREE.DirectionalLight;
 
-    constructor(initialLat: number, initialLong: number) {
+    constructor(initialLat: number = -2.791, initialLong: number = 101.568) {
         this.startAnimation = this.startAnimation.bind(this);
 
         this.scene = new THREE.Scene();
@@ -46,19 +46,21 @@ export default class Planetarium {
         // this.scene.add(this.ambientalLight);
 
         this.dayLight = new THREE.DirectionalLight(0xffffff, 1);
-        this.dayLight.position.set(1, 1, 1).normalize();
+        this.dayLight.position.set(1, 0, 1).normalize();
 
         this.nightLight = new THREE.DirectionalLight(0xffffff, 0.1);
-        this.nightLight.position.set(-1, -1, -1).normalize();
+        this.nightLight.position.set(-1, 0, -1).normalize();
 
         this.scene.add(this.dayLight, this.nightLight);
+
+        console.log(this.dayLight.position);
 
         const helper = new THREE.DirectionalLightHelper( this.dayLight, 15);
         // this.scene.add( helper );
 
         // The X axis is red. The Y axis is green. The Z axis is blue. (https://threejs.org/docs/?q=axes%20helper#api/en/helpers/AxesHelper)
         const axesHelper = new THREE.AxesHelper(100);
-        // this.scene.add(axesHelper);
+        this.scene.add(axesHelper);
 
         this.textureLoader = new THREE.TextureLoader();
         this.earthTexture = this.textureLoader.load("./earth-texture.jpg");
@@ -83,6 +85,9 @@ export default class Planetarium {
 
     startAnimation() {
         requestAnimationFrame(this.startAnimation);
+
+        // rotar las luces respecto al eje Y de la tierra
+
 
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
