@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Satellite } from '../models/satellites';
 
 export default class Planetarium {
 
@@ -14,19 +15,19 @@ export default class Planetarium {
 
     earthGeometry: THREE.SphereGeometry;
     earthMaterial: THREE.MeshLambertMaterial;
-    sphereTexture: THREE.Texture;
+    earthTexture: THREE.Texture;
     earth: THREE.Mesh;
 
     issGeometry: THREE.SphereGeometry;
     issMaterial: THREE.MeshBasicMaterial;
     iss: THREE.Mesh;
 
-    scale: number = 1 / 1_000;
-    // earthRadius: number = 6_371_000 * this.scale; // radio de la Tierra en metros
     earthRadius: number = 8; // radio de la Tierra en metros
-    satelliteRadius: number = 0.25; // radio del satélite en metros, sobredimensionado
+    issRadius: number = 0.25; // radio del satélite en metros, sobredimensionado
 
-    constructor() {
+    issAltitude: number = 2;
+
+    constructor(initialLat: number, initialLong: number) {
         this.startAnimation = this.startAnimation.bind(this);
 
         this.scene = new THREE.Scene();
@@ -46,23 +47,19 @@ export default class Planetarium {
         this.scene.add(axesHelper);
 
         this.textureLoader = new THREE.TextureLoader();
-        this.sphereTexture = this.textureLoader.load("./earth-texture.jpg");
+        this.earthTexture = this.textureLoader.load("./earth-texture.jpg");
 
         this.earthGeometry = new THREE.SphereGeometry(this.earthRadius, 150, 150);
-        this.earthMaterial = new THREE.MeshLambertMaterial({ map: this.sphereTexture });
+        this.earthMaterial = new THREE.MeshLambertMaterial({ map: this.earthTexture });
         this.earth = new THREE.Mesh(this.earthGeometry, this.earthMaterial)
         this.scene.add(this.earth);
 
-        this.issGeometry = new THREE.SphereGeometry(this.satelliteRadius, 32, 32);
+        this.issGeometry = new THREE.SphereGeometry(this.issRadius, 32, 32);
         this.issMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
         this.iss = new THREE.Mesh(this.issGeometry, this.issMaterial);
         this.scene.add(this.iss);
 
-        const lat = 40;
-        const long = -75;
-        const alt = 2;
-
-        this.setIssPosition(lat, long, alt);
+        this.setIssPosition(initialLat, initialLong, this.issAltitude);
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
@@ -75,7 +72,7 @@ export default class Planetarium {
         requestAnimationFrame(this.startAnimation);
 
         this.controls.update();
-        this.renderer.render(this.scene, this.camera)
+        this.renderer.render(this.scene, this.camera);
     }
 
     setIssPosition(lat: number, long: number, alt: number) {
@@ -88,5 +85,14 @@ export default class Planetarium {
         const z = radius * Math.sin(phi) * Math.sin(theta);
 
         this.iss.position.set(x, y, z);
+    }
+
+    async getIssPosition() {
+        const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
+        const issData = await response.json() as Satellite;
+    
+        const { latitude, longitude } = issData;
+    
+        return { latitude, longitude }
     }
 }
