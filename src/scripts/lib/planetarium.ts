@@ -8,7 +8,6 @@ export default class Planetarium {
     renderer: THREE.WebGLRenderer;
     controls: OrbitControls;
 
-    // directionalLight: THREE.DirectionalLight
     ambientalLight: THREE.AmbientLight;
 
     textureLoader: THREE.TextureLoader;
@@ -23,15 +22,16 @@ export default class Planetarium {
     iss: THREE.Mesh;
 
     scale: number = 1 / 1_000;
-    earthRadius: number = 6_371_000 * this.scale; // radio de la Tierra en metros
-    satelliteRadius: number = 50_000 * this.scale; // radio del satélite en metros, sobredimensionado
+    // earthRadius: number = 6_371_000 * this.scale; // radio de la Tierra en metros
+    earthRadius: number = 8; // radio de la Tierra en metros
+    satelliteRadius: number = 0.25; // radio del satélite en metros, sobredimensionado
 
     constructor() {
         this.startAnimation = this.startAnimation.bind(this);
 
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1_000, 100_000);
-        this.camera.position.z = 15000;
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera.position.z = 20;
         this.renderer = new THREE.WebGLRenderer();
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -41,12 +41,12 @@ export default class Planetarium {
         this.ambientalLight = new THREE.AmbientLight( 0xffffff );
         this.scene.add(this.ambientalLight);
 
-        this.textureLoader = new THREE.TextureLoader();
-        this.sphereTexture = this.textureLoader.load("./earth-texture.jpg", () => {
+        // The X axis is red. The Y axis is green. The Z axis is blue. (https://threejs.org/docs/?q=axes%20helper#api/en/helpers/AxesHelper)
+        const axesHelper = new THREE.AxesHelper(100);
+        this.scene.add(axesHelper);
 
-            // renderizar cuando se ha cargado la textura de la tierra
-            this.renderer.render(this.scene, this.camera);
-        });
+        this.textureLoader = new THREE.TextureLoader();
+        this.sphereTexture = this.textureLoader.load("./earth-texture.jpg");
 
         this.earthGeometry = new THREE.SphereGeometry(this.earthRadius, 150, 150);
         this.earthMaterial = new THREE.MeshLambertMaterial({ map: this.sphereTexture });
@@ -60,7 +60,7 @@ export default class Planetarium {
 
         const lat = 40;
         const long = -75;
-        const alt = 1_000_000 * this.scale;
+        const alt = 2;
 
         this.setIssPosition(lat, long, alt);
 
