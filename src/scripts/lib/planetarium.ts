@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Earth } from './earth';
 import { Iss } from './iss';
@@ -27,6 +28,7 @@ export default class Planetarium {
     constructor() {
         this.animate = this.animate.bind(this);
         this.update = this.update.bind(this);
+        this.onLoadIss3DModel = this.onLoadIss3DModel.bind(this);
 
         this.latitudeValueElement = document.querySelector<HTMLElement>(".location-data > #latitude > span")!;
         this.longitudeValueElement = document.querySelector<HTMLElement>(".location-data > #longitude > span")!;
@@ -39,7 +41,7 @@ export default class Planetarium {
         this.renderer = new THREE.WebGLRenderer();
 
         // añadir los controles a la máscara para permitir tener html por encima del canvas y no perder controles
-        this.controls = new OrbitControls(this.camera, this.sceneContainer); 
+        this.controls = new OrbitControls(this.camera, this.sceneContainer);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
 
@@ -52,9 +54,11 @@ export default class Planetarium {
         this.earth = new Earth(this.textureLoader);
         this.scene.add(this.earth.mesh);
 
-        this.iss = new Iss();
-        this.iss.setPositionFromCoords(this.iss.initialLat, this.iss.initialLong, this.iss.altitude);
-        this.scene.add(this.iss.mesh);
+        this.iss = new Iss("./ISS_stationary.glb", this.onLoadIss3DModel);
+
+        // this.celestialIss = new CelestialIss();
+        // this.iss.setPositionFromCoords(this.iss.initialLat, this.iss.initialLong, this.iss.altitude);
+        // this.scene.add(this.iss.mesh);
 
         // establecer valores de lat y long en el DOM
         this.latitudeValueElement.textContent = this.iss.initialLat.toString();
@@ -83,13 +87,17 @@ export default class Planetarium {
 
     async update() {
         const { latitude, longitude, altitude } = await this.iss.getIssPosition();
-            // console.log(`lat: ${latitude}, long: ${longitude}`);
+        // console.log(`lat: ${latitude}, long: ${longitude}`);
         this.iss.setPositionFromCoords(latitude, longitude, this.iss.altitude);
 
         // actualziar valores del dom
         this.latitudeValueElement.textContent = latitude.toFixed(5).toString();
         this.longitudeValueElement.textContent = longitude.toFixed(5).toString();
         this.altitudeValueElement.textContent = altitude.toFixed(5).toString();
+    }
+
+    onLoadIss3DModel(gltfData: GLTF) {
+        this.scene.add(gltfData.scene);
     }
 
 }
