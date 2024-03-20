@@ -9,6 +9,7 @@
     justify-content: space-between;
 
     .title {
+        user-select: none;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -16,6 +17,7 @@
     }
     
     .location-data {
+        user-select: none;
         display: flex;
         align-items: center;
         justify-content: center;
