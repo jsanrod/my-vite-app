@@ -34,8 +34,8 @@ export class Iss extends CelestialObject {
         const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
         const issData = await response.json() as Satellite;
 
-        const { latitude, longitude } = issData;
+        const { latitude, longitude, altitude } = issData;
 
-        return { latitude, longitude }
+        return { latitude, longitude, altitude }
     }
 }

@@ -5,14 +5,20 @@ export class Lights {
     dayLight: THREE.DirectionalLight;
     nightLight: THREE.DirectionalLight;
 
+    dayLightHelper: THREE.DirectionalLightHelper;
+
+    ambientLight: THREE.AmbientLight;
+
     constructor() {
         this.dayLight = new THREE.DirectionalLight(0xffffff, 1);
         this.dayLight.position.set(12, 0, 12);
 
         this.nightLight = new THREE.DirectionalLight(0xffffff, 0.1);
         this.nightLight.position.set(-12, 0, -12);
+        
+        this.ambientLight = new THREE.AmbientLight(0xffffff);
 
-        // const dayLightHelper = new THREE.DirectionalLightHelper(this.dayLight, 2);
+        this.dayLightHelper = new THREE.DirectionalLightHelper(this.dayLight, 2);
         // const nightLightHelper = new THREE.DirectionalLightHelper(this.nightLight, 2);
     }
 
