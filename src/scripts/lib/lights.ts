@@ -6,6 +6,7 @@ export class Lights {
     nightLight: THREE.DirectionalLight;
 
     dayLightHelper: THREE.DirectionalLightHelper;
+    nightLightHelper: THREE.DirectionalLightHelper;
 
     ambientLight: THREE.AmbientLight;
 
@@ -16,10 +17,10 @@ export class Lights {
         this.nightLight = new THREE.DirectionalLight(0xffffff, 0.1);
         this.nightLight.position.set(-12, 0, -12);
         
-        this.ambientLight = new THREE.AmbientLight(0xffffff);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
 
         this.dayLightHelper = new THREE.DirectionalLightHelper(this.dayLight, 2);
-        // const nightLightHelper = new THREE.DirectionalLightHelper(this.nightLight, 2);
+        this.nightLightHelper = new THREE.DirectionalLightHelper(this.nightLight, 2);
     }
 
     rotate() {

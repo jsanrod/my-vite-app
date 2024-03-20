@@ -63,6 +63,8 @@ export default class Planetarium {
         this.lights = new Lights();
         this.scene.add(this.lights.dayLight, this.lights.nightLight);
 
+        this.scene.add(this.lights.ambientLight); // para suavizar intersección de sombras
+
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.sceneContainer.appendChild(this.renderer.domElement);
 
